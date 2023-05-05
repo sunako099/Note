@@ -69,7 +69,7 @@ function.call(thisArg,arg1,arg2,...)
 
 **会让一个函数总是显示的绑定到一个对象上**
 
-​		 使用bind方法，bind() 方法创建一个新的绑定函数（bound function，BF）；
+​		 使用bind方法，bind() 方法**创建一个新的绑定函数**（bound function，BF）；
 
 ​		 绑定函数是一个 exotic function object（怪异函数对象，ECMAScript 2015 中的术语）
 
@@ -136,6 +136,36 @@ obj1.foo()   //obj1对象
 ◼ **情况三：箭头函数**
 
  就没有this，用显式绑定也没有用
+
+## 手写apply、call、bind方法
+
+[(44条消息) 手写 实现call、apply和bind方法 超详细！！！_圆圆01的博客-CSDN博客](https://blog.csdn.net/weixin_45844049/article/details/118026630)
+
+```js
+function foo(name,age,height,address){
+    console.log(this,name,age,height,address)
+}
+//bind手写
+Function.prototype.hybind=function (thisArg,...otherArgs) { 
+    thisArg=thisArg===null||thisArg===undefined?window:Object(thisArg) //判断第一个参数类型，确保是对象
+    Object.defineProperty(thisArg,"fn",{
+        enumerable:false,
+        configurable:true,
+        writable:false,
+        value:this
+    })
+    return (...newArgs)=>{  //后续传参
+        //var allArgs=otherArgs.concat(newArgs)
+        var allArgs=[...otherArgs,...newArgs]
+        thisArg.fn(...allArgs)   //因为后续还要使用该函数，故不可以删除
+    }
+ }
+
+ var newFoo=foo.hybind("abc","kobe",30)
+ newFoo(1.88,"广州|")
+```
+
+
 
 # 箭头函数
 
@@ -554,4 +584,26 @@ var obj={
 
  从狭义的角度来说：JavaScript中一个函数，如果访问了外层作用域的变量，那么它是一个闭包；
 
+
+
+任何闭包的使用场景都离不开这两点：
+
+- 创建私有变量
+- 延长变量的生命周期
+
+> 一般函数的词法环境在函数返回后就被销毁，但是闭包会保存对创建时所在词法环境的引用，即便创建时所在的执行上下文被销毁，但创建时所在词法环境依然存在，以达到延长变量的生命周期的目的
+
 ## 内存泄漏
+
+维持函数内局部变量，使其得不到释放
+
+```js
+function bindEvent() {
+  var obj = document.createElement('XXX');
+  var unused = function () {
+    console.log(obj, '闭包内引用obj obj不会被释放');
+  };
+  obj = null; // 解决方法
+}
+```
+
