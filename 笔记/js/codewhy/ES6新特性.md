@@ -182,7 +182,367 @@ ES6中新增了**块级作用域**，并且通过let、const、function、class�
  var p=new Person() //报错
 ```
 
-◼ 但是我们会发现函数拥有块级作用域，但是外面依然是可以访问的：
+◼ 但是我们会发现**函数拥有块级作用域，但是外面依然是可以访问的**：
 
 ​		 这是因为**引擎会对函数的声明进行特殊的处理，允许像var那样进行提升**；
 
+# 模板字符串
+
+◼ **ES6允许我们使用字符串模板来嵌入JS的变量或者表达式来进行拼接：**
+
+​		 首先，我们会使用 **``** 符号来编写字符串，称之为模板字符串；
+
+​		 其次，在模板字符串中，我们可以通过 **${expression}** 来嵌入动态的内容；
+
+## 标签模板字符串
+
+◼ **我们一起来看一个普通的JavaScript的函数：**
+
+```js
+function foo(...args){
+	console.log(args)
+}
+foo("Hello World")
+```
+
+◼ **如果我们使用标签模板字符串，并且在调用的时候插入其他的变量：**
+
+​		 模板字符串被拆分了；
+
+​		 第一个元素是数组，是被模块字符串拆分的字符串组合；
+
+​		 后面的元素是一个个模块字符串传入的内容；
+
+```js
+const name="why"
+const age=18
+//[ [ 'Hello','World',''] ,'why',18]
+foo`Hello ${name} World ${age}`
+```
+
+# 函数的默认参数
+
+◼ **而在ES6中，我们允许给函数一个默认值：**
+
+```js
+function foo(x=20,y=30){
+    console.log(x,y)
+}
+foo(50,100) //50 100
+foo() //20 30
+```
+
+◼ **默认值也可以和解构一起来使用：**
+
+```js
+//写法一：
+function foo({name,age}={name:"why",age:18}){
+    console.log(name,age)
+}
+//写法二：
+function foo({name:"why",age:18}={}){
+    console.log(name,age)
+}
+```
+
+◼ **带默认值的参数通常会将其放到最后（在很多语言中，如果不放到最后其实会报错的）**
+
+◼ **带默认值的参数会改变函数的length的个数，默认值以及后面的参数都不计算在length之内**
+
+# **函数的剩余参数**
+
+◼ **ES6中引用了rest parameter，可以将不定数量的参数放入到一个数组中：**
+
+​		 如果最后一个参数是 ... 为前缀的，那么它会将剩余的参数放到该参数中，并且作为**一个数组**；
+
+◼ **那么剩余参数和arguments有什么区别呢？**
+
+​		 剩余参数只包含那些没有对应形参的实参，而 arguments 对象包含了传给函数的所有实参；
+
+​		 arguments对象不是一个真正的数组，而rest参数是一个真正的数组，可以进行数组的所有操作；
+
+​		 arguments是早期的ECMAScript中为了方便去获取所有的参数提供的一个数据结构，而rest参数是ES6中提供并且希望以此来替代arguments的；
+
+◼ **注意：剩余参数必须放到最后一个位置，否则会报错**
+
+# 展开语法
+
+**展开运算符其实是一种浅拷贝**
+
+◼ **展开语法的场景：**
+
+​		 在字符串使用；
+
+​		 在函数调用时使用；
+
+​		 在数组构造时使用；
+
+​		 在构建对象字面量时（不是任何对象都可以，因为对象默认不可迭代【可迭代对象：数组/String/arguments】）
+
+```js
+const names=["abc","cba","fsa"]
+const str="Hello"
+
+function foo(name1,name2,...args){
+    console.log(name1,name2,args)
+}
+
+foo(...names)
+foo(...str)
+
+//在构建对象字面量时
+const obj={
+    name:"why",
+    age:18
+}
+//foo(...obj) //绝对不行
+const info={
+    ...obj,
+    address="London"
+}
+console.log(info)
+```
+
+# 深浅拷贝和引用赋值
+
+## **引用赋值**
+
+![](./01_引用赋值.png)
+
+## **浅拷贝**
+
+![02_浅拷贝-原始类型](./02_浅拷贝-原始类型.png)![03_浅拷贝-复杂类型](./03_浅拷贝-复杂类型.png)
+
+## 深拷贝
+
+![04_深拷贝-JSON做法](./04_深拷贝-JSON做法.png)
+
+# **数值的表示**
+
+◼ 在ES6中规范了二进制和八进制的写法：
+
+```js
+const num1=0b100
+const num2=0o100
+const num3=0x100
+```
+
+◼ 另外在ES2021新增特性：数字过长时，可以使用_作为连接符
+
+```js
+const num4=100_00_0_000_0000
+```
+
+# Symbol
+
+Symbol是ES6中新增的一个基本数据类型，翻译为符号。
+
+◼ Symbol就是为了解决**对象属性名冲突**，用来**生成一个独一无二的值**。
+
+​		 Symbol值是**通过Symbol函数来生成**的，生成后可以作为属性名；
+
+​		 也就是在ES6中，==对象的属性名可以使用**字符串**，也可以使用**Symbol值**；==（用其他也会先转成字符串再当属性名）
+
+◼ **Symbol即使多次创建值，它们也是不同的：**Symbol函数执行后每次创建出来的值都是独一无二的；
+
+◼ **我们也可以在创建Symbol值的时候传入一个描述description**：这个是ES2019（ES10）新增的特性；
+
+```js
+ const s1=Symbol("abc")
+ const s2=Symbol("fvd")
+
+ const obj={}
+
+ //1.写法一：属性名赋值
+ obj[s1]="abc"
+ obj[s2]="fvd"
+ //2.写法二：Object.defineProperty
+ Object.defineProperty(obj,s1,{
+    enumerable:true,
+    value:"abc"
+ })
+ //3.写法三：定义字面量时直接使用
+ const info={
+    [s1]:"abc",
+    [s2]:"fvd"
+ }
+```
+
+```js
+ //获取Symbol对应的key
+ console.log(Object.keys(obj))  //这样是获取不到Symbol的，只能获取普通值的key
+ console.log(Object.getOwnPropertySymbols(obj))
+```
+
+◼ **如果就是想创建相同的Symbol应该怎么做呢？**
+
+​		 可以使用**Symbol.for**方法来做到这一点；
+
+​		 并且可以通过**Symbol.keyFor**方法来获取对应的key；
+
+```js
+const s1=Symbol.for("abc")
+const s2=Symbol.for("abc")
+
+console.log(s1===s2)//true
+const key=Symbol.keyFor(s1)
+console.log(key)//abc
+const s2=Symbol.for(key)
+console.log(s2===s3)//true
+```
+
+# Set
+
+◼ **Set是一个新增的数据结构，可以用来保存数据，类似于数组，但是和数组的区别是元素不能重复。**
+
+​		 创建Set我们需要通过Set构造函数（暂时没有字面量创建的方式）：
+
+◼ 我们可以发现Set中存放的元素是不会重复的，那么Set有一个非常常用的功能就是**给数组去重**。
+
+```js
+const arr=[10,20,10,44,78,44]
+const set=new Set(arr)
+const newAry1=[...set]
+const newAry2=Array.from(set)
+console.log(newAry1,newAry2) //[10, 20, 44, 78][10, 20, 44, 78]
+```
+
+## Set常见方法
+
+◼ **Set常见的属性：**
+
+​		 size：返回Set中元素的个数；
+
+◼ **Set常用的方法：**
+
+​		 add(value)：添加某个元素，返回Set对象本身；
+
+​		 delete(value)：从set中删除和这个值相等的元素，返回boolean类型；
+
+​		 has(value)：判断set中是否存在某个元素，返回boolean类型；
+
+​		 clear()：清空set中所有的元素，没有返回值；
+
+​		 forEach(callback, [, thisArg])：通过forEach遍历set；
+
+◼ **另外Set是支持for of的遍历的。**
+
+## WeakSet
+
+◼ **和Set类似的另外一个数据结构称之为WeakSet，也是内部元素不能重复的数据结构。**
+
+◼ **那么和Set有什么区别呢？**
+
+​		 区别一：WeakSet中只能存放对象类型，不能存放基本数据类型；
+
+​		 区别二：WeakSet对元素的引用是弱引用，如果没有其他引用对某个对象进行引用，那么GC可以对该对象进行回收；
+
+◼ **WeakSet常见的方法：**
+
+​		 add(value)：添加某个元素，返回WeakSet对象本身；
+
+​		 delete(value)：从WeakSet中删除和这个值相等的元素，返回boolean类型；
+
+​		 has(value)：判断WeakSet中是否存在某个元素，返回boolean类型；
+
+◼ **注意：WeakSet不能遍历**
+
+​		 因为WeakSet只是对对象的弱引用，如果我们遍历获取到其中的元素，那么有可能造成对象不能正常的销毁。
+
+​		 所以存储到WeakSet中的对象是没办法获取的；
+
+### **WeakSet的应用**
+
+```js
+const pwset=new WeakSet()
+ class Person{
+    constructor(){
+        pwset.add(this)
+    }
+    running(){
+        if(!pwset.has(this)) throw new Error("不可用其他对象调用running方法")
+        console.log("runnning",this)
+    }
+ }
+```
+
+# Map
+
+◼ **另外一个新增的数据结构是Map，用于存储映射关系。**
+
+◼ **之前使用对象来存储映射关系，他们有什么区别？**
+
+​		 事实上我们对象存储映射关系只能用字符串（ES6新增了Symbol）作为属性名（key）；
+
+​		 某些情况下我们可能希望通过其他类型作为key，比如对象，这个时候会自动将对象转成字符串来作为key；
+
+◼ **那么我们就可以使用Map：**
+
+```js
+ const obj1={name:"why"}
+ const obj2={age:18}
+
+ const map=new Map()
+ map.set(obj1,"abc")
+ map.set(obj2,"cba")
+ console.log(map.get(obj1))
+ console.log(map.get(obj2))
+
+ const map2=new Map([
+    [obj1,"abc"],
+    [obj2,"cba"],
+    [obj1,"nba"],
+ ])
+ console.log(map.get(obj1)) //nba
+ console.log(map.get(obj2)) //cba
+```
+
+## **Map的常用方法**
+
+◼ **Map常见的属性：**
+
+​		 size：返回Map中元素的个数；
+
+◼ **Map常见的方法：**
+
+​		 set(key, value)：在Map中添加key、value，并且返回整个Map对象；
+
+​		 get(key)：根据key获取Map中的value；
+
+​		 has(key)：判断是否包括某一个key，返回Boolean类型；
+
+​		 delete(key)：根据key删除一个键值对，返回Boolean类型；
+
+​		 clear()：清空所有的元素；
+
+​		 forEach(callback, [, thisArg])：通过forEach遍历Map；
+
+◼ **Map也可以通过for of进行遍历。**
+
+## **WeakMap**
+
+◼ **和Map类型的另外一个数据结构称之为WeakMap，也是以键值对的形式存在的。**
+
+◼ 那么和Map有什么区别呢？
+
+​		 区别一：WeakMap的key只能使用对象，不接受其他的类型作为key；
+
+​		 区别二：WeakMap的key对对象想的引用是弱引用，如果没有其他引用引用这个对象，那么GC可以回收该对象；
+
+◼ **WeakMap常见的方法有四个：**
+
+​			 set(key, value)：在Map中添加key、value，并且返回整个Map对象；
+
+​		 get(key)：根据key获取Map中的value；
+
+​		 has(key)：判断是否包括某一个key，返回Boolean类型；
+
+​		 delete(key)：根据key删除一个键值对，返回Boolean类型；
+
+◼ **注意：WeakMap也是不能遍历的**
+
+​		 没有forEach方法，也不支持通过for of的方式进行遍历；
+
+### **WeakMap的应用**
+
+见vue3响应式源码

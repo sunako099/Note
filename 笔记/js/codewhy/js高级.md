@@ -169,9 +169,9 @@ Function.prototype.hybind=function (thisArg,...otherArgs) {
 
 # 箭头函数
 
- 箭头函数不会绑定this、arguments属性；
+ 箭头函数不会绑定this、arguments、super属性；
 
- 箭头函数不能作为构造函数来使用（不能和new一起来使用，会抛出错误）；
+ 箭头函数是没有显式原型prototype的，不能作为构造函数来使用（不能和new一起来使用，会抛出错误）；
 
 ## 编写优化
 

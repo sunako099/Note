@@ -110,6 +110,19 @@ Object.defineProperties(obj,{
 
 ​		 getOwnPropertyDescriptors
 
+```js
+const person = {
+  name: 'Alice',
+  age: 30
+};
+
+const descriptors = Object.getOwnPropertyDescriptors(person);
+
+console.log(descriptors.name.value); // 'Alice'
+console.log(descriptors.age.writable); // true
+
+```
+
 ◼ **禁止对象扩展新属性：preventExtensions**
 
 ​		 给一个对象添加新的属性会失败（在严格模式下会报错）；
