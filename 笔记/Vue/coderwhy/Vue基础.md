@@ -410,3 +410,199 @@ btn5Click(event,message) {
 ​		 上面的方法会直接修改原来的数组； 
 
 ​		 但是某些方法不会替换原来的数组，而是会生成新的数组，比如 filter()、concat() 和 slice()；
+
+#### **key的作用**
+
+◼ **在使用v-for进行列表渲染时，我们通常会给元素或者组件绑定一个key属性。**
+
+◼ **这个key属性有什么作用呢？我们先来看一下官方的解释：**
+
+​		 key属性主要用在Vue的虚拟DOM算法，在新旧nodes对比时辨识VNodes；
+
+​		 如果不使用key，Vue会使用一种最大限度减少动态元素并且尽可能的尝试就地修改/复用相同类型元素的算法；
+
+​		 而使用key时，它会基于key的变化重新排列元素顺序，并且会移除/销毁key不存在的元素；
+
+##### **VNode**
+
+ VNode的全称是Virtual Node，也就是虚拟节点；
+
+ 事实上，无论是组件还是元素，它们最终在Vue中表示出来的都是一个个VNode；
+
+ **==VNode的本质是一个JavaScript的对象==**；
+
+## **v-model**
+
+ v-model指令可以在表单 input、textarea以及select元素上创建双向数据绑定；
+
+ 它会根据控件类型自动选取正确的方法来更新元素；
+
+ 尽管有些神奇，但 v-model **本质上不过是语法糖**，它负责监听用户的输入事件来更新数据，并在某种极端场景下进行一些特殊处理；
+
+◼ **官方有说到，v-model的原理其实是背后有两个操作：**
+
+​		 v-bind绑定value属性的值；
+
+​		 v-on绑定input事件监听到函数中，函数会获取最新的值赋值到绑定的属性中；
+
+```vue
+<input v-model="search"/>
+//等价于：
+<input :value="search" @input="seaech=$event.target.value"/>
+```
+
+### **绑定textarea**
+
+```vue
+<div>
+    <textarea v-model="article" cols="30" rows="10"></textarea>
+    <h2>
+        article当前的值是：{{article}}
+    </h2>
+</div>
+```
+
+### **绑定checkbox**
+
+◼ **单个勾选框：**
+
+​		 **v-model即为布尔值**。
+
+​		 此时input的**value属性并不影响v-model的值**。
+
+```vue
+<div>
+    <lable for="agree">
+    	<input id="agree" type="checkbox" v-model="isAgree">同意
+    </lable>
+    <h2>
+        isAgree的值：{{isAgree}}
+    </h2>
+</div>
+```
+
+◼ **多个复选框：**
+
+​		 当是多个复选框时，因为可以选中多个，所以对应的**data中属性是一个数组**。
+
+​		 当选中某一个时，就会将**input的value添加到数组中**。**(即必须有value值)**
+
+```vue
+<div>
+    <lable for="basketball">
+    	<input id="basketball" type="checkbox" value="basketball" v-model="hobbies">篮球
+    </lable>
+    <lable for="football">
+    	<input id="football" type="checkbox" value="football" v-model="hobbies">足球
+    </lable>
+    <h2>
+        hobbies的值：{{hobbies}}
+    </h2>
+</div>
+```
+
+### **绑定radio**
+
+```vue
+<div>
+    <lable for="male">
+    	<input id="male" type="radio" value="male" v-model="gender">男
+    </lable>
+    <lable for="female">
+    	<input id="female" type="radio" value="female" v-model="gender">女
+    </lable>
+    <h2>
+        gender的值：{{gender}}
+    </h2>
+</div>
+```
+
+### **绑定select**
+
+◼ **单选：只能选中一个值**
+
+​		 **v-model绑定的是一个值；**
+
+​		 当我们选中option中的一个时，会将它对应的**value赋值到fruit中**；
+
+```vue
+<div>
+    <select v-model="fruit">
+        <option value="apple">苹果</option>
+        <option value="orange">橘子</option>
+        <option value="banana">香蕉</option>
+    </select>
+    <h2>
+        fruit当前的值：{{fruit}}
+    </h2>
+</div>
+```
+
+◼ **多选：可以选中多个值**
+
+​		 **v-model绑定的是一个数组**；
+
+​		 当选中多个值时，就会将选中的**option对应的value添加到数组fruit中**；
+
+```vue
+<div>
+    <select v-model="fruit" multiple size="3">
+        <option value="apple">苹果</option>
+        <option value="orange">橘子</option>
+        <option value="banana">香蕉</option>
+    </select>
+    <h2>
+        fruit当前的值：{{fruit}}
+    </h2>
+</div>
+```
+
+### **值绑定**
+
+◼ **目前我们在前面的案例中大部分的值都是在template中固定好的：**
+
+​		 比如gender的两个输入框值male、female；
+
+​		 比如hobbies的三个输入框值basketball、football、tennis；
+
+◼ 在真实开发中，我们的数据可能是来自服务器的，那么我们就可以先将值请求下来，绑定到data返回的对象中，再通过v-bind来进行值的绑定，这个过程就是**值绑定**。
+
+​		 这里不再给出具体的做法，因为还是v-bind的使用过程。		
+
+### **v-model修饰符** 
+
+#### **lazy**
+
+◼ **lazy修饰符是什么作用呢？**
+
+​		 默认情况下，v-model在进行双向绑定时，绑定的是input事件，那么会在每次内容输入后就将最新的值和绑定的属性进行同步；
+
+​		 如果我们在v-model后跟上lazy修饰符，那么会将绑定的事件切换为 change 事件，只有在提交时（比如回车）才会触发；
+
+#### **number**
+
+◼ **我们先来看一下v-model绑定后的值是什么类型的：**
+
+​		 message总是string类型，即使在我们设置type为number也是string类型；
+
+`<input type="number" v-model="message"/>`
+
+◼ **如果我们希望转换为数字类型，那么可以使用.number 修饰符：**
+
+``<input type="number" v-model.number="score"/>``
+
+◼ **另外，在我们进行逻辑判断时，如果是一个string类型，在可以转化的情况下会进行隐式转换的：**
+
+​		 下面的score在进行判断的过程中会进行隐式转化的；
+
+```js
+const score="100"
+if(score>90){
+	console.log("优秀")
+}
+console.log(typeof score)
+```
+
+#### **trim**
+
+◼ **如果要自动过滤用户输入的守卫空白字符，可以给v-model添加** **trim 修饰符**
