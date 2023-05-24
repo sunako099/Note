@@ -77,7 +77,7 @@ const router=createRouter({
 
 ​		 也可以提高首屏的渲染效率；
 
-◼ **其实这里还是我们前面讲到过的webpack的分包知识，而Vue Router默认就支持动态来导入组件：**
+◼ **其实这里是webpack的分包知识，而Vue Router默认就支持动态来导入组件：**
 
 ​		 这是因为component可以传入一个组件，也可以接收一个函数，该函数 需要放回一个Promise；
 
